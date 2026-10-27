@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NutriScan AI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background: radial-gradient(circle at top,#0f172a,#020617);
+color:white;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+/* NAVBAR */
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+}
+
+.logo{
+font-size:22px;
+font-weight:600;
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.badge{
+background:#22c55e;
+color:black;
+font-size:12px;
+padding:4px 10px;
+border-radius:20px;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+margin-top:60px;
+}
+
+.hero h1{
+font-size:56px;
+font-weight:700;
+line-height:1.2;
+}
+
+.highlight{
+background:linear-gradient(90deg,#84cc16,#22c55e);
+-webkit-background-clip:text;
+color:transparent;
+}
+
+.hero p{
+margin-top:10px;
+color:#94a3b8;
+font-size:18px;
+}
+
+/* CARD */
+
+.container{
+display:flex;
+justify-content:center;
+margin-top:50px;
+}
+
+.card{
+width:450px;
+padding:35px;
+border-radius:20px;
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(20px);
+box-shadow:0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* UPLOAD */
+
+.upload{
+border:2px dashed rgba(255,255,255,0.2);
+padding:40px;
+text-align:center;
+border-radius:15px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.upload:hover{
+border-color:#22c55e;
+background:rgba(34,197,94,0.08);
+}
+
+.upload img{
+width:70px;
+margin-bottom:10px;
+opacity:0.8;
+}
+
+.preview{
+display:none;
+margin-top:20px;
+text-align:center;
+}
+
+.preview img{
+width:200px;
+border-radius:12px;
+}
+
+/* INPUTS */
+
+.inputs{
+display:flex;
+gap:10px;
+margin-top:20px;
+}
+
+.inputs input{
+flex:1;
+padding:12px;
+border-radius:10px;
+border:none;
+outline:none;
+background:#0f172a;
+color:white;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+margin-top:20px;
+padding:14px;
+border:none;
+border-radius:12px;
+background:linear-gradient(90deg,#22c55e,#4ade80);
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 30px rgba(34,197,94,0.4);
+}
+
+/* RESULTS */
+
+.results{
+margin-top:40px;
+}
+
+.dish{
+font-size:18px;
+margin-bottom:8px;
+color:#e2e8f0;
+}
+
+.calories{
+font-size:42px;
+font-weight:700;
+color:#22c55e;
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+.card2{
+background:#020617;
+padding:15px;
+border-radius:10px;
+text-align:center;
+}
+
+.card2 p{
+color:#94a3b8;
+}
+
+.card2 h3{
+margin-top:5px;
+}
+
+/* PARTICLE CANVAS */
+
+#bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<nav>
+<div class="logo">🥗 NutriScan <span class="badge">AI</span></div>
+</nav>
+
+<section class="hero">
+
+<h1>Know what's on<br>
+your <span class="highlight">plate</span>
+</h1>
+
+<p>Upload a food photo and get instant AI nutrition analysis</p>
+
+</section>
+
+<div class="container">
+
+<div class="card">
+
+<form action="/analyze" method="post" enctype="multipart/form-data">
+
+<label class="upload">
+<input type="file" name="food_image" id="fileInput" hidden required>
+<img src="https://cdn-icons-png.flaticon.com/512/685/685655.png">
+<p>Drop your food photo<br>or click to browse</p>
+</label>
+
+<div class="preview" id="preview">
+<img id="imgPreview">
+<p id="fileName"></p>
+</div>
+
+<div class="inputs">
+<input type="number" name="weight" placeholder="Weight (g)" required>
+<input type="number" name="servings" value="1" placeholder="Servings">
+</div>
+
+<button type="submit">Analyze Nutrition</button>
+
+</form>
+
+{% if result %}
+
+<div class="results">
+
+<div class="dish">
+Identified Dish: {{ result.predicted_food_label }}
+</div>
+
+<div class="dish">
+AI Confidence: {{ (result.prediction_confidence * 100) | round(2) }}%
+</div>
+
+<div class="calories">
+{{ result.nutrition.calories }} kcal
+</div>
+
+<div class="grid">
+
+<div class="card2">
+<p>Protein</p>
+<h3>{{ result.nutrition.protein_g }} g</h3>
+</div>
+
+<div class="card2">
+<p>Fat</p>
+<h3>{{ result.nutrition.fat_g }} g</h3>
+</div>
+
+<div class="card2">
+<p>Carbs</p>
+<h3>{{ result.nutrition.carbs_g }} g</h3>
+</div>
+
+<div class="card2">
+<p>Weight</p>
+<h3>{{ result.weight_g }} g</h3>
+</div>
+
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<script>
+
+/* IMAGE PREVIEW */
+
+const input=document.getElementById("fileInput")
+const preview=document.getElementById("preview")
+const img=document.getElementById("imgPreview")
+const fileName=document.getElementById("fileName")
+
+input.addEventListener("change",()=>{
+
+const file=input.files[0]
+
+img.src=URL.createObjectURL(file)
+fileName.textContent=file.name
+preview.style.display="block"
+
+})
+
+/* PARTICLE BACKGROUND */
+
+const canvas=document.getElementById("bg")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let particles=[]
+
+for(let i=0;i<80;i++){
+
+particles.push({
+
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+vx:(Math.random()-0.5)*0.5,
+vy:(Math.random()-0.5)*0.5
+
+})
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+particles.forEach(p=>{
+
+p.x+=p.vx
+p.y+=p.vy
+
+if(p.x<0||p.x>canvas.width)p.vx*=-1
+if(p.y<0||p.y>canvas.height)p.vy*=-1
+
+ctx.beginPath()
+ctx.arc(p.x,p.y,2,0,Math.PI*2)
+ctx.fillStyle="#22c55e"
+ctx.fill()
+
+})
+
+requestAnimationFrame(animate)
+
+}
+
+animate()
+
+</script>
+
+</body>
+</html>

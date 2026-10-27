@@ -1,0 +1,97 @@
+/* AI Assistant Container */
+
+.ai-assistant{
+position:fixed;
+bottom:20px;
+left:20px;
+width:260px;
+height:360px;
+border-radius:25px;
+background:linear-gradient(135deg,#1f1c2c,#928dab);
+overflow:hidden;
+box-shadow:0 25px 60px rgba(0,0,0,0.45);
+z-index:20;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:0.3s;
+}
+
+/* Assistant video */
+
+.ai-assistant video{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:25px;
+}
+
+/* Dish preview */
+
+.dish-preview{
+position:absolute;
+bottom:40px;
+right:20px;
+width:90px;
+height:90px;
+border-radius:50%;
+background:#fff;
+display:none;
+align-items:center;
+justify-content:center;
+animation:floatDish 2s ease-in-out infinite;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+.dish-preview img{
+width:80%;
+border-radius:50%;
+}
+
+/* Floating animation */
+
+@keyframes floatDish{
+
+0%,100%{
+transform:translateY(0);
+}
+
+50%{
+transform:translateY(-12px);
+}
+
+}
+
+/* Speech bubble */
+
+.speech{
+position:absolute;
+top:15px;
+left:15px;
+background:white;
+padding:10px 14px;
+border-radius:15px;
+font-size:13px;
+color:#333;
+display:none;
+max-width:180px;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Glow when AI is active */
+
+.ai-assistant.active{
+box-shadow:0 0 50px rgba(34,197,94,0.8);
+}
+
+/* Neural network background (optional) */
+
+#network{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-2;
+pointer-events:none;
+}
